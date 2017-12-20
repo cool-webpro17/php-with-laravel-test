@@ -17,19 +17,7 @@ class TestController extends Controller
 
     public function populateVotes(Request $request) {
     		$color_id = $request->input('color_id');
-
-    		$count = 0;
-    		if ($color_id == 'all') {
-    				$count = Vote::sum('count');
-    		} else {
-		    		$vote = Vote::where('color_id', '=', $color_id)->first();
-
-		    		if (empty($vote)) {
-		    				$count = 0;
-		    		} else {
-		    				$count = $vote->count;
-		    		}
-	    	}
+    		$count = Vote::where('color_id', '=', $color_id)->sum('count');
 
 	    	return response()->json(['status' => 'success', 'count' => $count]);
     }

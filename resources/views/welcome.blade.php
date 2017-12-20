@@ -110,7 +110,7 @@
                             @endforeach
                             <tr>
                                 <td><a class="populate-vote" data-color_id="all">Total</a></td>
-                                <td class="votes-all"></td>
+                                <td class="total"></td>
                             <tr>
                         </tbody>
                     </table>
@@ -128,20 +128,33 @@
             $(document).ready(function () {
                 $("#cv-table .populate-vote").on("click", function () {
                     var color_id = $(this).data("color_id");
-                    $.ajax({
-                        type: "post",
-                        url: "{{ URL::route('populate-votes') }}",
-                        data: { color_id: color_id },
-                        success: function(data) {
-                            if (data['status'] == 'success') {
-                                var element_str = "#cv-table td.votes-" + color_id;
-                                $(element_str).text(data['count']);
-                                console.log("success!");
-                            } else {
-                                console.log("failed!");
+
+                    if (color_id == "all") {
+                        var total = 0;
+                        $("#cv-table td[class^='votes-']").each(function (index, element) {
+                            var each_vote = $(element).text();
+                            if (each_vote) {
+                                total += parseInt(each_vote);
                             }
-                        }
-                    });
+                        });
+
+                        $("#cv-table td.total").text(total);
+                    } else {
+                        $.ajax({
+                            type: "post",
+                            url: "{{ URL::route('populate-votes') }}",
+                            data: { color_id: color_id },
+                            success: function(data) {
+                                if (data['status'] == 'success') {
+                                    var element_str = "#cv-table td.votes-" + color_id;
+                                    $(element_str).text(data['count']);
+                                    console.log("success!");
+                                } else {
+                                    console.log("failed!");
+                                }
+                            }
+                        });
+                    }
                 });
             });
         </script>
